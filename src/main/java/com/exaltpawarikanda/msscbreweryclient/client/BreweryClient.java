@@ -3,6 +3,8 @@ package com.exaltpawarikanda.msscbreweryclient.client;
 import com.exaltpawarikanda.msscbreweryclient.model.BeerDto;
 import com.exaltpawarikanda.msscbreweryclient.model.CustomerDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -14,18 +16,22 @@ import java.util.UUID;
  * Created by Exalt Pawarikanda on 7/26/21
  */
 @Component
-@RequiredArgsConstructor
-@ConfigurationProperties(prefix = "sfg.brewery",ignoreUnknownFields = false)
 public class BreweryClient {
-    public final String BEER_PATH_V1= "/api/v1/beer/";
-    public final String CUSTOMER_PATH_V1= "/api/v1/customers/";
-    private String apihost;
+    @Value("${sfg.brewery.beer-path}")
+    private  String BEER_PATH_V1;
 
-    public void setApihost(String apihost) {
-        this.apihost = apihost;
-    }
+    @Value("${sfg.brewery.customer-path}")
+    private  String CUSTOMER_PATH_V1;
+
+    @Value("${sfg.brewery.apihost}")
+    private  String apihost;
 
     private final RestTemplate restTemplate;
+
+    public BreweryClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
 
     public BeerDto getBeerById(UUID uuid){
         return restTemplate.getForObject(apihost + BEER_PATH_V1 + uuid.toString(),BeerDto.class);
